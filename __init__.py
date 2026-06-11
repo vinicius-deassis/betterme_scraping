@@ -1,18 +1,34 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import telebot
+from dotenv import load_dotenv
+import os
+import datetime
 
-driver = webdriver.Chrome()
-driver.get("http://selecao.ufrpe.br")
-driver.implicitly_wait(10)
-titles = driver.find_elements(By.TAG_NAME,'h4')
+load_dotenv()
+TOKEN = os.environ.get("BOT_TOKEN")
+CHAT_ID = os.environ.get("CHAT_ID")
+bot = telebot.TeleBot(TOKEN)
 
 def is_PS26_2():
+    driver = webdriver.Chrome()
+    driver.get("http://selecao.ufrpe.br")
+    driver.implicitly_wait(10)
+    titles = driver.find_elements(By.TAG_NAME, 'h4')
     for title in titles:
         #print(title.text)
-        if 'INGRESSO EXTRA PARA 2026.1' in title.text:
+        if 'INGRESSO EXTRA PARA 2026.2' in title.text:
             return True
 
-if is_PS26_2():
-    print("PS extra 2026 encontrado!")
-else:
-    print("Não há PS extra aberto.")
+def send_result(found):
+    if found:
+        text = f'PS extra 2026 encontrado! {datetime.datetime.today().strftime('%d/%m/%Y')}'
+    else:
+        text = f'Não há PS aberto. {datetime.datetime.today().strftime('%d/%m/%Y')}'
+    bot.send_message(CHAT_ID, text)
+
+def main():
+    send_result(is_PS26_2())
+
+
+main()
