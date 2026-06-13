@@ -2,6 +2,11 @@ name: Search for PS everyday
 on:
   schedule:
     - cron: '0 9,21 * * 1,5'
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${|{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   search:
     runs-on: ubuntu-latest
