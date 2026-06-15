@@ -18,7 +18,7 @@ def is_PS26_2():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
 
-    driver = webdriver.Chrome(chrome_options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get("http://selecao.ufrpe.br")
     driver.implicitly_wait(10)
     titles = driver.find_elements(By.TAG_NAME, 'h4')
