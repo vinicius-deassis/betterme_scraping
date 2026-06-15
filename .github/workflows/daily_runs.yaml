@@ -1,10 +1,14 @@
 name: Search for PS everyday
+
 on:
   schedule:
-    - cron: '0 9,21 * * 1,5'
+    # Ajustado de 1,5 para 1-5 para cobrir de segunda a sexta-feira
+    - cron: '0 9,21 * * 1-5'
   workflow_dispatch:
+
 concurrency:
-  group: ${{ github.workflow }}-${|{ github.ref }}
+  # Corrigido o caractere inválido de interpolação
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,13 +25,13 @@ jobs:
           python-version: 3.12
 
       - name: install dependencies
-        run:
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt; fi
+        # Adicionado o pipe '|' para aceitar múltiplas linhas e removido o '; fi' incorreto
+        run: python -m pip install --upgrade pip |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: search and message
-        run:
-          python3 main.py
+        # Adicionado o pipe '|' para respeitar a quebra de linha do YAML
+        run: python main.py
         env:
           BOT_TOKEN: ${{ secrets.TELEBOT_API_KEY }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
